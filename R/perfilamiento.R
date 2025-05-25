@@ -22,10 +22,13 @@ missing_evaluation <- function(x){
 #' @param x A character vector to evaluate.
 #'
 #' @return A tibble with two columns: \code{original} and \code{modificada}.
-#'
+#' @method missing_evaluation character
 #' @examples
+#' \dontrun{
 #' missing_evaluation.character(c("", " ", "NULL", "data"))
-#'
+#'  }
+#' @importFrom tibble tibble
+#' @importFrom dplyr case_when
 #' @export
 missing_evaluation.character <- function(x){
 
@@ -58,18 +61,20 @@ missing_evaluation.character <- function(x){
 #'     \item{original}{The original numeric values, with "NULL" replaced by `NA_real_`.}
 #'     \item{modificada}{A character column labeling "NULL" values as `"numero_nulo"`, and all other values as `NA_character_`.}
 #'   }
-#'
+#' @method missing_evaluation numeric_raw
 #' @examples
+#' \dontrun{
 #' missing_evaluation.numeric(c(1, 2, "NULL", 4))
-#'
+#' }
 #' @importFrom tibble tibble
 #' @importFrom dplyr case_when
-missing_evaluation.numeric <- function(x){
+#' @export
+missing_evaluation.numeric_raw <- function(x){
 
   tibble::tibble(
     original =  dplyr::case_when(
       x == "NULL" ~ NA_real_,
-      TRUE ~ x
+      TRUE ~ as.numeric(x)
     ),
     modificada = dplyr::case_when(
       x == "NULL" ~ "numero_nulo",
@@ -94,11 +99,12 @@ missing_evaluation.numeric <- function(x){
 #' @importFrom purrr pmap_dfc
 #'
 #' @examples
+#' \dontrun{
 #' library(purrr)
 #' df <- data.frame(a = c("1", "2"), b = c("3.5", "4.5"))
 #' clases <- c("integer", "numeric")
 #' asignar_clase(df, clases)
-#'
+#' }
 #' @export
 asignar_clase <- function(data, clases){
   purrr::pmap_dfc(.l = list(
@@ -114,10 +120,6 @@ asignar_clase <- function(data, clases){
 
 
 
-
-iris_2 <- asignar_clase(iris,
-                        c("numeric", "numeric", "numeric", "numeric", "character")
-)
 
 #' missing_treatment
 #'
@@ -136,6 +138,8 @@ iris_2 <- asignar_clase(iris,
 #' @importFrom purrr imap_dfc
 #' @importFrom dplyr rename_with select
 #' @importFrom stringr str_c str_remove
+#' @importFrom magrittr %>%
+#'
 #'
 #' @examples
 #' \dontrun{
