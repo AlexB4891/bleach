@@ -2,10 +2,10 @@
 library(bleach) # Cambia por el nombre de tu paquete si es diferente
 
 test_that("missing_evaluation.character clasifica correctamente", {
-  x <- c("", " ", "NULL", "data")
+  x <- c("", "    ", NA_character_, "data")
   res <- missing_evaluation(x)
   expect_equal(res$original, c(NA_character_, NA_character_, NA_character_, "data"))
-  expect_equal(res$modificada, c("texto_vacio", "texto_espacio_vacio", "texto_nulo", NA_character_))
+  expect_equal(res$modificada, c("texto_vacio", "texto_vacio", "texto_na", NA_character_))
 })
 
 test_that("missing_evaluation.numeric clasifica correctamente", {
@@ -13,23 +13,9 @@ test_that("missing_evaluation.numeric clasifica correctamente", {
   class(x) <- "numeric_raw"
   res <- missing_evaluation(x)
   expect_equal(res$original, c(1, 2, NA_real_, 4))
-  expect_equal(res$modificada, c(NA_character_, NA_character_, "numero_nulo", NA_character_))
+  expect_equal(res$modificada, c(NA_character_, NA_character_, "no_numero", NA_character_))
 })
 
-test_that("missing_evaluation.character maneja solo texto", {
-  x <- c("abc", "NULL", "")
-  res <- missing_evaluation(x)
-  expect_equal(res$original, c("abc", NA_character_, NA_character_))
-  expect_equal(res$modificada, c(NA_character_, "texto_nulo", "texto_vacio"))
-})
-
-test_that("missing_evaluation.numeric maneja solo números", {
-  x <- c("10", "NULL")
-  class(x) <- "numeric_raw"
-  res <- missing_evaluation(x)
-  expect_equal(res$original, c(10, NA_real_))
-  expect_equal(res$modificada, c(NA_character_, "numero_nulo"))
-})
 
 
 test_that("asignar_clase asigna clase character", {

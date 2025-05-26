@@ -34,15 +34,13 @@ missing_evaluation.character <- function(x){
 
   tibble::tibble(
     original =  dplyr::case_when(
-      x == "" ~ NA_character_,
-      x == " " ~ NA_character_,
-      x == "NULL" ~ NA_character_,
+      is.na(x) ~ NA_character_,
+      stringr::str_detect(x,"^[:blank:]*$") ~ NA_character_,
       TRUE ~ x
     ),
     modificada = dplyr::case_when(
-      x == "" ~ "texto_vacio",
-      x == " " ~ "texto_espacio_vacio",
-      x == "NULL" ~ "texto_nulo",
+      is.na(x)  ~ "texto_na",
+      stringr::str_detect(x,"^[:blank:]*$") ~ "texto_vacio",
       TRUE ~ NA_character_
     )
   )
@@ -66,18 +64,22 @@ missing_evaluation.character <- function(x){
 #' \dontrun{
 #' missing_evaluation.numeric(c(1, 2, "NULL", 4))
 #' }
-#' @importFrom tibble tibble
+#' @import tibble tibble
 #' @importFrom dplyr case_when
 #' @export
 missing_evaluation.numeric_raw <- function(x){
 
   tibble::tibble(
     original =  dplyr::case_when(
-      x == "NULL" ~ NA_real_,
+      is.na(x) ~ NA_real_,
+      stringr::str_detect(x,"^[:blank:]*$") ~ NA_real_,
+      stringr::str_detect(x,"[[:digit:]\\.,]", negate = T) ~ NA_real_,
       TRUE ~ as.numeric(x)
     ),
     modificada = dplyr::case_when(
-      x == "NULL" ~ "numero_nulo",
+      is.na(x) ~ "numero_na",
+      stringr::str_detect(x,"^[:blank:]*$") ~ "numero_vacio",
+      stringr::str_detect(x,"[[:digit:]\\.,]", negate = T) ~ "no_numero",
       TRUE ~ NA_character_
     )
   )
@@ -178,3 +180,6 @@ missing_treatment <- function(data, clean = FALSE, reporte = FALSE){
   return(tabla)
 
 }
+
+
+
