@@ -182,4 +182,68 @@ missing_treatment <- function(data, clean = FALSE, reporte = FALSE){
 }
 
 
+#' Asignar los atributos para una variable de acuerdo a una lista
+#'
+#' Ocupando la matriz de perfilamiento se asignan los atributos a los vectores que componen un data frame
+#'
+#' @param x Un objeto al que se le asignarán atributos.
+#' @param atributos Lista nombrada con los atributos a asignar al objeto \code{x}. Cada elemento de la lista debe tener un nombre que será el nombre del atributo.
+#'
+#' @returns El objeto \code{x} con los atributos asignados.
+#' @export
+#'
+asignar_atributos <- function(x, atributos) {
+  for (nombre in names(atributos)) {
+    attr(x, nombre) <- atributos[[nombre]]
+  }
+  return(x)
+}
+
+
+#' Perfilamiento genérico
+#'
+#' Esta función genérica define el método \code{perfilamiento} para su uso con diferentes clases de objetos.
+#'
+#' @param x Un objeto sobre el que se aplicará el método de perfilamiento.
+#' @return El resultado dependerá del método específico implementado para la clase de \code{x}.
+#' @export
+#'
+#' @examples
+#' @import lubridate
+#' @import dplyr
+#'
+#'
+perfilamiento <- function(x) {
+
+  UseMethod("perfilamiento")
+
+}
+
+
+#' Perfilamiento de fechas
+#' Esta función evalúa y transforma un objeto de tipo fecha, aplicando un formato específico definido en los atributos del objeto.
+#'
+#' @param x Un objeto de tipo fecha que se desea transformar.
+#' @return Un objeto de tipo fecha transformado según el formato especificado en los atributos.
+#' @method perfilamiento fecha
+#' @import dplyr
+#' @import lubridate
+#' @import tibble
+#' @export
+perfilamiento.fecha <- function(x) {
+
+  formato <- attributes(x)$formato
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA_Date_,
+    TRUE ~ as.Date(x, format = formato)
+  )
+
+  attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+
+}
 
