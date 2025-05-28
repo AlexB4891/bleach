@@ -224,7 +224,7 @@ perfilamiento <- function(x) {
 #' Esta función evalúa y transforma un objeto de tipo fecha, aplicando un formato específico definido en los atributos del objeto.
 #'
 #' @param x Un objeto de tipo fecha que se desea transformar.
-#' @return Un objeto de tipo fecha transformado según el formato especificado en los atributos.
+#' @return Un objeto de tipo fecha transformado según el tipo especificado en la clase.
 #' @method perfilamiento fecha
 #' @import dplyr
 #' @import lubridate
@@ -247,3 +247,136 @@ perfilamiento.fecha <- function(x) {
 
 }
 
+#' Perfilamiento de objetos de tipo fecha y hora
+#'
+#' Esta función evalúa y transforma un objeto de tipo fecha y hora, aplicando un formato específico definido en los atributos del objeto.
+#'
+#' @param x Un objeto de tipo fecha y hora que se desea transformar.
+#' @return Un objeto de tipo fecha y hora transformado según el tipo especificado en la clase.
+#' @method perfilamiento fecha_hora
+#' @import dplyr
+#' @import lubridate
+#' @import tibble
+#' @export
+#'
+
+perfilamiento.fecha_hora <- function(x) {
+
+  formato <- attributes(x)$formato
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA_POSIXct_,
+    TRUE ~ as.POSIXct(x, format = formato)
+  )
+
+  attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+
+}
+
+#' Perfilamiento de objetos de tipo numérico
+#' Esta función evalúa y transforma un objeto de tipo numérico.
+#' @param x Un objeto de tipo numérico que se desea transformar.
+#' @return Un objeto de tipo numérico transformado según el tipo especificado en la clase.
+#' @method perfilamiento numeric
+#' @import dplyr
+#' @import tibble
+#' @export
+
+perfilamiento.numero <- function(x) {
+
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA_real_,
+    TRUE ~ as.numeric(x)
+  )
+
+  attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+
+}
+
+#' Perfilamiento de objetos de tipo entero
+#'
+#' Esta función evalúa y transforma un objeto de tipo entero.
+#'
+#' @param x Un objeto de tipo entero que se desea transformar.
+#' @return Un objeto de tipo entero transformado según el tipo especificado en la clase.
+#' @method perfilamiento integer
+#' @import dplyr
+#' @import tibble
+#' @export
+#'
+
+perfilamiento.entero <- function(x) {
+
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA_integer_,
+    TRUE ~ as.integer(x)
+  )
+
+  attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+
+}
+
+#' Perfilamiento de objetos de tipo lógico
+#' Esta función evalúa y transforma un objeto de tipo lógico.
+#' @param x Un objeto de tipo lógico que se desea transformar.
+#' @return Un objeto de tipo lógico transformado según el tipo especificado en la clase.
+#' @method perfilamiento logical
+#' @import dplyr
+#' @import tibble
+#' @export
+#'
+
+perfilamiento.logico <- function(x) {
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA,
+    TRUE ~ as.logical(x)
+  )
+
+  attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+
+}
+
+#' Perfilamiento de objetos tipo character
+#'
+#' Esta función evalúa y transforma un objeto de tipo character.
+#' @param x Un objeto de tipo character que se desea transformar.
+#' @return Un objeto de tipo character transformado según el tipo especificado en la clase.
+#' @method perfilamiento character
+#' @import dplyr
+#' @import tibble
+#' @export
+#'
+
+perfilamiento.cadena <- function(x) {
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA_character_,
+    TRUE ~ as.character(x)
+  )
+
+  attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+
+}
