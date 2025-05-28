@@ -208,11 +208,6 @@ asignar_atributos <- function(x, atributos) {
 #' @return El resultado dependerá del método específico implementado para la clase de \code{x}.
 #' @export
 #'
-#' @examples
-#' @import lubridate
-#' @import dplyr
-#'
-#'
 perfilamiento <- function(x) {
 
   UseMethod("perfilamiento")
@@ -286,7 +281,7 @@ perfilamiento.fecha_hora <- function(x) {
 #' @import tibble
 #' @export
 
-perfilamiento.numero <- function(x) {
+perfilamiento.decimal <- function(x) {
 
 
   y <- dplyr::case_when(

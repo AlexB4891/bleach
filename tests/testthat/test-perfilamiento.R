@@ -73,3 +73,28 @@ test_that("asignar_clase funciona con varias columnas y clases", {
   expect_equal(class(res$b), "fecha")
   expect_equal(class(res$c), "logical")
 })
+
+
+
+# Funciones de perfilamiento ----------------------------------------------
+
+library(tibble)
+
+datos_simulados <- tibble(
+  upm  = c("001", "002", "", "004", NA, "006", "\t", "008", "009", "010"),
+  fexp = c(1.2, NA, 0.8, "", 2.5, 1.0, "\t", 3.1, NA, 2.0),
+  p45  = c(5, "", NA, 10, 3, "\t", 7, 4, 6, NA),
+  p11  = c("2023-01-01", "", "2023-01-03", NA, "\t", "2023-01-06", "2023-01-07", "", "2023-01-09", "2023-01-10")
+)
+
+instrucciones <- tribble(
+  ~variable, ~descripcion_de_la_variable, ~tipo_de_variable,         ~tipo_perfilamiento,  ~formato,
+  "upm",     "Unidad Primaria de Muestreo", "Identificador",         "cadena",             NA_character_,
+  "fexp",    "Factor de expansion",         "Numérico",              "numero",             NA_character_,
+  "p45",     "Cuantos años trabaja",        "Cuantitativa discreta", "entero",             NA_character_,
+  "p11",     "Fecha de levantamiento",      "Fecha",                 "fecha",              "%Y-%m-%d"
+)
+
+
+
+
