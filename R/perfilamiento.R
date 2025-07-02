@@ -30,13 +30,14 @@ missing_evaluation <- function(x){
 #' @importFrom tibble tibble
 #' @importFrom dplyr case_when
 #' @export
-missing_evaluation.character <- function(x){
+missing_evaluation.character_raw <- function(x){
+
 
   tibble::tibble(
     original =  dplyr::case_when(
       is.na(x) ~ NA_character_,
       stringr::str_detect(x,"^[:blank:]*$") ~ NA_character_,
-      TRUE ~ x
+      TRUE ~ as.character(x)
     ),
     modificada = dplyr::case_when(
       is.na(x)  ~ "texto_na",
@@ -44,6 +45,7 @@ missing_evaluation.character <- function(x){
       TRUE ~ NA_character_
     )
   )
+
 
 }
 
@@ -69,12 +71,13 @@ missing_evaluation.character <- function(x){
 #' @export
 missing_evaluation.numeric_raw <- function(x){
 
+
   tibble::tibble(
     original =  dplyr::case_when(
-      is.na(x) ~ NA_real_,
-      stringr::str_detect(x,"^[:blank:]*$") ~ NA_real_,
-      stringr::str_detect(x,"[[:digit:]\\.,]", negate = T) ~ NA_real_,
-      TRUE ~ as.numeric(x)
+      is.na(x) ~ NA_character_,
+      stringr::str_detect(x,"^[:blank:]*$") ~ NA_character_,
+      stringr::str_detect(x,"[[:digit:]\\.,]", negate = T) ~ NA_character_,
+      TRUE ~ as.character(x)
     ),
     modificada = dplyr::case_when(
       is.na(x) ~ "numero_na",
@@ -114,7 +117,11 @@ asignar_clase <- function(data, clases){
     clases
   ),
   .f = function(vector, clase){
-    class(vector) <- clase
+
+    clases <- c(class(vector),clase)
+
+    class(vector) <- unique(clases)
+
     return(vector)
   }
   )
@@ -149,6 +156,8 @@ asignar_clase <- function(data, clases){
 #' missing_treatment(mi_data, clean = TRUE)
 #' missing_treatment(mi_data, reporte = TRUE)
 #' }
+#'
+#' @export
 missing_treatment <- function(data, clean = FALSE, reporte = FALSE){
 
   tabla <- data %>%
@@ -227,11 +236,15 @@ perfilamiento <- function(x) {
 #' @export
 perfilamiento.fecha <- function(x) {
 
-  formato <- attributes(x)$formato
+  arg <- attr(x, "argumentos")
+
+  # Expresión regular para extraer el formato después de "format = "
+  formato <- stringr::str_match(arg, 'formato\\s*=\\s*"([^"]+)"')[,2]
+
 
   y <- dplyr::case_when(
     is.na(x) ~ NA_Date_,
-    TRUE ~ as.Date(x, format = formato)
+    TRUE ~ as.Date(as.character(x), format = formato)
   )
 
   attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
@@ -257,11 +270,14 @@ perfilamiento.fecha <- function(x) {
 
 perfilamiento.fecha_hora <- function(x) {
 
-  formato <- attributes(x)$formato
+  arg <- attr(x, "argumentos")
+
+  # Expresión regular para extraer el formato después de "format = "
+  formato <- stringr::str_match(arg, 'formato\\s*=\\s*"([^"]+)"')[,2]
 
   y <- dplyr::case_when(
     is.na(x) ~ NA_POSIXct_,
-    TRUE ~ as.POSIXct(x, format = formato)
+    TRUE ~ as.POSIXct(as.character(x), format = formato, tz = "UTC")
   )
 
   attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
@@ -283,6 +299,18 @@ perfilamiento.fecha_hora <- function(x) {
 
 perfilamiento.decimal <- function(x) {
 
+  arg <- attr(x, "argumentos")
+
+  sep_dec <- stringr::str_match(arg, 'dec\\s*=\\s*\\"(.*?)\\"')[,2]
+
+
+  regex <- stringr::str_c("[^0-9", sep_dec, "]+")
+
+  x <- stringr::str_remove_all(x, regex)
+
+  x <- stringr::str_replace(x,
+                            pattern = sep_dec,
+                            replacement = "\\.")
 
   y <- dplyr::case_when(
     is.na(x) ~ NA_real_,
@@ -375,3 +403,72 @@ perfilamiento.cadena <- function(x) {
   return(y)
 
 }
+
+
+#' Perfilamiento de variable categórica
+#'
+#' Esta función toma un vector categórico y devuelve su representación según un diccionario asociado como atributo.
+#'
+#' @param x Un vector categórico con un atributo \code{diccionario} que mapea los valores de \code{x} a sus descripciones.
+#'
+#' @return Un vector con las descripciones correspondientes a los valores de \code{x} según el diccionario.
+#'
+#'
+#' @export
+perfilamiento.categorica <- function(x){
+
+  diccionario <- attr(x, "diccionario")
+
+  diccionario[x]
+}
+
+
+
+
+#' Homologación de categorías de una variable categórica
+#'
+#' Esta función obtiene un vector de homologación entre las categorías de entrada y salida
+#' para una variable categórica específica de una tabla, utilizando una conexión a base de datos.
+#'
+#' @param tbl_nombre Character. Nombre de la tabla de entrada.
+#' @param var Character. Nombre de la variable categórica a homologar.
+#' @param etiqueta Logical. Si es TRUE, utiliza la descripción de la categoría; si es FALSE, utiliza el código de salida. Por defecto es FALSE.
+#' @param conexion DBIConnection. Conexión activa a la base de datos (por ejemplo, generada con \code{RPostgres::dbConnect}).
+#'
+#' @return Named character vector. Vector de homologación donde los nombres corresponden a las categorías de entrada y los valores a las categorías homologadas.
+#'
+#' @importFrom dplyr if_else pull
+#' @importFrom glue glue_sql
+#' @importFrom purrr set_names
+#' @importFrom RPostgres dbGetQuery
+#'
+#' @export
+f_cat_homolog <- function(tbl_nombre,
+                        var,
+                        etiqueta=FALSE,
+                        conexion){
+
+  var_homologacion <- dplyr::if_else(condition = isTRUE(etiqueta),
+                                     true = "categoria_desc",
+                                     false = "categoria_out")
+
+  qry_cat_hom <-
+    glue::glue_sql("
+WITH variable AS (
+  SELECT id_var FROM variables
+  WHERE id_insumo=(SELECT id_insumo FROM tablas_in WHERE nombre={tbl_nombre}) AND
+  variable_in={var} AND
+  tipo='categórica')
+SELECT cin.categoria_in, cout.{`var_homologacion`}
+FROM categorias_out cout, categorias_in cin
+WHERE cin.id_var=(SELECT id_var FROM variable) AND
+cin.id_cat_out=cout.id_cat_out
+         ",.con=conexion)
+
+  tbl_homol <- RPostgres::dbGetQuery(conexion,qry_cat_hom)
+
+  vector_homologacion <- purrr::set_names(x = dplyr::pull(tbl_homol,var_homologacion),
+                                          nm = dplyr::pull(tbl_homol,"categoria_in"))
+  vector_homologacion
+}
+

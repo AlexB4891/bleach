@@ -29,4 +29,5 @@ missing_treatment(mi_data)
 missing_treatment(mi_data, clean = TRUE)
 missing_treatment(mi_data, reporte = TRUE)
 }
+
 }
