@@ -4,7 +4,7 @@
 \alias{perfilamiento.cadena}
 \title{Perfilamiento de objetos tipo character}
 \usage{
-\method{perfilamiento}{character}(x)
+\method{perfilamiento}{cadena}(x)
 }
 \arguments{
 \item{x}{Un objeto de tipo character que se desea transformar.}

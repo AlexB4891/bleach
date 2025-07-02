@@ -4,7 +4,7 @@
 \alias{perfilamiento.entero}
 \title{Perfilamiento de objetos de tipo entero}
 \usage{
-\method{perfilamiento}{integer}(x)
+\method{perfilamiento}{entero}(x)
 }
 \arguments{
 \item{x}{Un objeto de tipo entero que se desea transformar.}

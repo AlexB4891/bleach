@@ -5,7 +5,7 @@
 \title{Perfilamiento de objetos de tipo lógico
 Esta función evalúa y transforma un objeto de tipo lógico.}
 \usage{
-\method{perfilamiento}{logical}(x)
+\method{perfilamiento}{logico}(x)
 }
 \arguments{
 \item{x}{Un objeto de tipo lógico que se desea transformar.}

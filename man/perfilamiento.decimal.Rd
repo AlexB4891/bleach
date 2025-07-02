@@ -5,7 +5,7 @@
 \title{Perfilamiento de objetos de tipo numérico
 Esta función evalúa y transforma un objeto de tipo numérico.}
 \usage{
-\method{perfilamiento}{numeric}(x)
+\method{perfilamiento}{decimal}(x)
 }
 \arguments{
 \item{x}{Un objeto de tipo numérico que se desea transformar.}

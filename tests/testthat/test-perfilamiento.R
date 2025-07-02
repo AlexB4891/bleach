@@ -18,8 +18,6 @@ test_that("missing_evaluation.numeric clasifica correctamente", {
   expect_equal(res$modificada, c(NA_character_, NA_character_, "no_numero", NA_character_))
 })
 
-
-
 test_that("asignar_clase asigna clase character", {
   df <- data.frame(a = c("1", "2"), stringsAsFactors = FALSE)
   clases <- c("character")
@@ -29,37 +27,37 @@ test_that("asignar_clase asigna clase character", {
 
 test_that("asignar_clase asigna clase integer", {
   df <- data.frame(a = c("1", "2"), stringsAsFactors = FALSE)
-  clases <- c("integer")
+  clases <- c("entero")
   res <- asignar_clase(df, clases)
-  expect_equal(class(res$a), c("character","integer"))
+  expect_equal(class(res$a), "entero")
 })
 
 test_that("asignar_clase asigna clase numeric", {
   df <- data.frame(a = c("1.5", "2.5"), stringsAsFactors = FALSE)
-  clases <- c("numeric")
+  clases <- c("numero")
   res <- asignar_clase(df, clases)
-  expect_equal(class(res$a), c("character","numeric"))
+  expect_equal(class(res$a), "numero")
 })
 
 test_that("asignar_clase asigna clase logical", {
   df <- data.frame(a = c("TRUE", "FALSE"), stringsAsFactors = FALSE)
-  clases <- c("logical")
+  clases <- c("logico")
   res <- asignar_clase(df, clases)
-  expect_equal(class(res$a),c("character", "logical"))
+  expect_equal(class(res$a), "logico")
 })
 
 test_that("asignar_clase asigna clase Date", {
   df <- data.frame(a = c("2023-01-01", "2023-01-02"), stringsAsFactors = FALSE)
   clases <- c("fecha")
   res <- asignar_clase(df, clases)
-  expect_s3_class(res$a, c("character","fecha"))
+  expect_s3_class(res$a, "fecha")
 })
 
 test_that("asignar_clase asigna clase POSIXct", {
   df <- data.frame(a = c("2023-01-01 12:00:00", "2023-01-02 13:00:00"), stringsAsFactors = FALSE)
   clases <- c("fecha_hora")
   res <- asignar_clase(df, clases)
-  expect_equal(class(res$a), c("character","fecha_hora"))
+  expect_equal(class(res$a), "fecha_hora")
 })
 
 test_that("asignar_clase funciona con varias columnas y clases", {
@@ -69,13 +67,12 @@ test_that("asignar_clase funciona con varias columnas y clases", {
     c = c("TRUE", "FALSE"),
     stringsAsFactors = FALSE
   )
-  clases <- c("integer", "fecha", "logical")
+  clases <- c("entero", "fecha", "logico")
   res <- asignar_clase(df, clases)
-  expect_equal(class(res$a), c("character","integer"))
-  expect_equal(class(res$b), c("character","fecha"))
-  expect_equal(class(res$c), c("character","logical"))
+  expect_equal(class(res$a), "entero")
+  expect_equal(class(res$b), "fecha")
+  expect_equal(class(res$c), "logico")
 })
-
 
 
 

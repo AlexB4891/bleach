@@ -118,9 +118,7 @@ asignar_clase <- function(data, clases){
   ),
   .f = function(vector, clase){
 
-    clases <- c(class(vector),clase)
-
-    class(vector) <- unique(clases)
+    vector <- structure(vector, class = clase)
 
     return(vector)
   }
@@ -292,7 +290,7 @@ perfilamiento.fecha_hora <- function(x) {
 #' Esta función evalúa y transforma un objeto de tipo numérico.
 #' @param x Un objeto de tipo numérico que se desea transformar.
 #' @return Un objeto de tipo numérico transformado según el tipo especificado en la clase.
-#' @method perfilamiento numeric
+#' @method perfilamiento decimal
 #' @import dplyr
 #' @import tibble
 #' @export
@@ -331,7 +329,7 @@ perfilamiento.decimal <- function(x) {
 #'
 #' @param x Un objeto de tipo entero que se desea transformar.
 #' @return Un objeto de tipo entero transformado según el tipo especificado en la clase.
-#' @method perfilamiento integer
+#' @method perfilamiento entero
 #' @import dplyr
 #' @import tibble
 #' @export
@@ -357,7 +355,7 @@ perfilamiento.entero <- function(x) {
 #' Esta función evalúa y transforma un objeto de tipo lógico.
 #' @param x Un objeto de tipo lógico que se desea transformar.
 #' @return Un objeto de tipo lógico transformado según el tipo especificado en la clase.
-#' @method perfilamiento logical
+#' @method perfilamiento logico
 #' @import dplyr
 #' @import tibble
 #' @export
@@ -383,7 +381,7 @@ perfilamiento.logico <- function(x) {
 #' Esta función evalúa y transforma un objeto de tipo character.
 #' @param x Un objeto de tipo character que se desea transformar.
 #' @return Un objeto de tipo character transformado según el tipo especificado en la clase.
-#' @method perfilamiento character
+#' @method perfilamiento cadena
 #' @import dplyr
 #' @import tibble
 #' @export
@@ -410,7 +408,7 @@ perfilamiento.cadena <- function(x) {
 #' Esta función toma un vector categórico y devuelve su representación según un diccionario asociado como atributo.
 #'
 #' @param x Un vector categórico con un atributo \code{diccionario} que mapea los valores de \code{x} a sus descripciones.
-#'
+#' @method perfilamiento categorica
 #' @return Un vector con las descripciones correspondientes a los valores de \code{x} según el diccionario.
 #'
 #'
