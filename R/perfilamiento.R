@@ -299,6 +299,8 @@ perfilamiento.decimal <- function(x) {
 
   arg <- attr(x, "argumentos")
 
+  na_values <- attr(x, "valores_na")
+
   sep_dec <- stringr::str_match(arg, 'dec\\s*=\\s*\\"(.*?)\\"')[,2]
 
 
@@ -311,7 +313,7 @@ perfilamiento.decimal <- function(x) {
                             replacement = "\\.")
 
   y <- dplyr::case_when(
-    is.na(x) ~ NA_real_,
+    is.na(x) | x == na_values  ~ NA_real_,
     TRUE ~ as.numeric(x)
   )
 
@@ -337,9 +339,10 @@ perfilamiento.decimal <- function(x) {
 
 perfilamiento.entero <- function(x) {
 
+  na_values <- attr(x, "valores_na")
 
   y <- dplyr::case_when(
-    is.na(x) ~ NA_integer_,
+    is.na(x) | x == na_values ~ NA_integer_,
     TRUE ~ as.integer(x)
   )
 

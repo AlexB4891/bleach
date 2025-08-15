@@ -79,27 +79,31 @@ test_that("asignar_clase funciona con varias columnas y clases", {
 # Funciones de perfilamiento ----------------------------------------------
 
 test_that("perfilamiento.decimal respeta el atributo de separador decimal", {
-  x <- c("1,23", "4,56", "7,89", NA, "1000,01")
+  x <- c("1,23", "4,56", "7,89", NA, "1000,01", "999999")
   class(x) <- "decimal" # Asignar clase para simular datos de tipo decimal
 
   attr(x, "argumentos") <- 'dec=","' # separador decimal es la coma
 
+  attr(x, "valores_na") <- "999999" # separador decimal es la coma
+
   resultado <- perfilamiento(x)
 
-  expect_equal(as.numeric(resultado), c(1.23, 4.56, 7.89, NA_real_, 1000.01), tolerance = 1e-6)
+  expect_equal(as.numeric(resultado), c(1.23, 4.56, 7.89, NA_real_, 1000.01, NA_real_), tolerance = 1e-6)
   expect_true(!is.null(attr(resultado, "count_nas")))
 })
 
 
 test_that("perfilamiento.decimal respeta el atributo de separador decimal bien", {
-  x <- c("1.23", "4.56", "7.89", NA, "1000.01")
+  x <- c("1.23", "4.56", "7.89", NA, "1000.01", "999999")
   class(x) <- "decimal" # Asignar clase para simular datos de tipo decimal
 
   attr(x, "argumentos") <- 'dec="\\."' # separador decimal es la coma
 
+  attr(x, "valores_na") <- "999999" # separador decimal es la coma
+
   resultado <- bleach::perfilamiento(x)
 
-  expect_equal(as.numeric(resultado), c(1.23, 4.56, 7.89, NA_real_, 1000.01), tolerance = 1e-6)
+  expect_equal(as.numeric(resultado), c(1.23, 4.56, 7.89, NA_real_, 1000.01, NA_real_), tolerance = 1e-6)
   expect_true(!is.null(attr(resultado, "count_nas")))
 })
 
@@ -128,11 +132,12 @@ test_that("perfilamiento.fecha_hora respeta el atributo formato", {
 
 
 test_that("perfilamiento.entero transforma correctamente", {
-  x <- c("1", "2", NA, "abc", "5")
+  x <- c("1", "2", NA, "abc", "5","999999")
   class(x) <- "entero" # Asignar clase para simular datos de tipo entero
+  attr(x, "valores_na") <- "999999" # separador decimal es la coma
   resultado <- perfilamiento(x)
   expect_type(resultado, "integer")
-  expect_equal(as.integer(resultado), c(1L, 2L, NA_integer_, NA_integer_, 5L))
+  expect_equal(as.integer(resultado), c(1L, 2L, NA_integer_, NA_integer_, 5L, NA_integer_))
   expect_true(!is.null(attr(resultado, "count_nas")))
 })
 
