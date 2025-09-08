@@ -420,7 +420,9 @@ perfilamiento.categorica <- function(x){
 
   diccionario <- attr(x, "diccionario")
 
-  diccionario[x]
+  y <- diccionario[x]
+
+  if_else(is.na(y), "999999", as.character(y))
 }
 
 

@@ -169,7 +169,7 @@ test_that("perfilamiento.categorica funciona con diccionario", {
 
   resultado <- perfilamiento(x)
 
-  expect_equal(as.character(resultado), c("Alfa", "Beta", "Alfa", "Gamma", NA))
+  expect_equal(as.character(resultado), c("Alfa", "Beta", "Alfa", "Gamma", "999999"))
   expect_type(resultado, "character")
 })
 
@@ -182,7 +182,7 @@ test_that("perfilamiento.categorica maneja valores no encontrados", {
 
   resultado <- perfilamiento(x)
 
-  expect_equal(as.character(resultado), c("Alfa", NA, "Beta"))
+  expect_equal(as.character(resultado), c("Alfa", "999999", "Beta"))
 })
 
 library(testthat)
