@@ -94,10 +94,10 @@ test_that("perfilamiento.decimal respeta el atributo de separador decimal", {
 
 
 test_that("perfilamiento.decimal respeta el atributo de separador decimal bien", {
-  x <- c("1.23", "4.56", "7.89", NA, "1000.01", "999999")
+  x <- c("1,23", "4,56", "7,89", NA, "1000,01", "999999")
   class(x) <- "decimal" # Asignar clase para simular datos de tipo decimal
 
-  attr(x, "argumentos") <- 'dec="\\."' # separador decimal es la coma
+  attr(x, "argumentos") <- 'dec=","' # separador decimal es la coma
 
   attr(x, "valores_na") <- "999999" # separador decimal es la coma
 
@@ -132,12 +132,12 @@ test_that("perfilamiento.fecha_hora respeta el atributo formato", {
 
 
 test_that("perfilamiento.entero transforma correctamente", {
-  x <- c("1", "2", NA, "abc", "5","999999")
+  x <- c("1", "2", NA, "abc", "5","999999","2.5", "s")
   class(x) <- "entero" # Asignar clase para simular datos de tipo entero
   attr(x, "valores_na") <- "999999" # separador decimal es la coma
   resultado <- perfilamiento(x)
   expect_type(resultado, "integer")
-  expect_equal(as.integer(resultado), c(1L, 2L, NA_integer_, NA_integer_, 5L, NA_integer_))
+  expect_equal(as.integer(resultado), c(1L, 2L, NA_integer_, NA_integer_, 5L, NA_integer_,25, NA_integer_))
   expect_true(!is.null(attr(resultado, "count_nas")))
 })
 
@@ -169,7 +169,7 @@ test_that("perfilamiento.categorica funciona con diccionario", {
 
   resultado <- perfilamiento(x)
 
-  expect_equal(as.character(resultado), c("Alfa", "Beta", "Alfa", "Gamma", "999999"))
+  expect_equal(as.character(resultado), c("Alfa", "Beta", "Alfa", "Gamma", "Sin categoría"))
   expect_type(resultado, "character")
 })
 
@@ -182,7 +182,7 @@ test_that("perfilamiento.categorica maneja valores no encontrados", {
 
   resultado <- perfilamiento(x)
 
-  expect_equal(as.character(resultado), c("Alfa", "999999", "Beta"))
+  expect_equal(as.character(resultado), c("Alfa", "Sin categoría", "Beta"))
 })
 
 library(testthat)

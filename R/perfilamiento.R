@@ -341,9 +341,10 @@ perfilamiento.entero <- function(x) {
 
   na_values <- attr(x, "valores_na")
 
+
   y <- dplyr::case_when(
     is.na(x) | x == na_values ~ NA_integer_,
-    TRUE ~ as.integer(x)
+    TRUE ~ as.integer(stringr::str_remove_all(x,"[^0-9]"))
   )
 
   attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
@@ -422,7 +423,7 @@ perfilamiento.categorica <- function(x){
 
   y <- diccionario[x]
 
-  if_else(is.na(y), "999999", as.character(y))
+  if_else(is.na(y), "Sin categoría", as.character(y))
 }
 
 
