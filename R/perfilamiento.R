@@ -308,6 +308,10 @@ perfilamiento.decimal <- function(x) {
 
   x <- stringr::str_remove_all(x, regex)
 
+  if(sep_dec == "."){
+    sep_dec <- "\\."
+  }
+
   x <- stringr::str_replace(x,
                             pattern = sep_dec,
                             replacement = "\\.")
@@ -338,6 +342,7 @@ perfilamiento.decimal <- function(x) {
 #'
 
 perfilamiento.entero <- function(x) {
+
 
   na_values <- attr(x, "valores_na")
 
