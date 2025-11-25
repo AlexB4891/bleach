@@ -341,6 +341,8 @@ perfilamiento.entero <- function(x) {
 
   na_values <- attr(x, "valores_na")
 
+  x <- stringr::str_remove_all(x, "[^0-9]")
+
   y <- dplyr::case_when(
     is.na(x) | x == na_values ~ NA_integer_,
     TRUE ~ as.integer(x)
