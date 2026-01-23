@@ -326,3 +326,120 @@ test_that("f_cat_homolog maneja tabla/variable inexistente", {
   expect_equal(length(resultado), 0)
   expect_type(resultado, "character")
 })
+
+con2 <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+
+crear_esquema_tablas_in_test <- function(con) {
+
+  # Tabla tablas_in (incluye fecha_datos porque la función hace EXTRACT(YEAR FROM ti.fecha_datos))
+  DBI::dbExecute(con, "
+    CREATE TABLE tablas_in (
+      id_insumo   INTEGER PRIMARY KEY,
+      nombre      TEXT NOT NULL,
+      fecha_datos DATE
+    )
+  ")
+
+  # SQLite no maneja schemas como Postgres; creamos una vista con el nombre esperado.
+  DBI::dbExecute(con, "
+    CREATE VIEW 'public.tablas_in' AS
+    SELECT * FROM tablas_in
+  ")
+}
+
+insertar_datos_tablas_in_test <- function(con) {
+
+  DBI::dbExecute(con, "
+    INSERT INTO tablas_in (id_insumo, nombre, fecha_datos)
+    VALUES
+      (1, 'encuesta_hogares',  '2021-03-15'),
+      (2, 'encuesta_personas', '2022-07-22'),
+      (3, 'censo_poblacion',   '2023-11-05')
+  ")
+}
+
+crear_esquema_tablas_in_test(con2)
+insertar_datos_tablas_in_test(con2)
+
+dbGetQuery(con2, "SELECT * FROM tablas_in") %>%
+  purrr::map(class)
+
+testthat::test_that("f_valida_anio: tibble SIN anio  agrega anio desde BD y process_anio = no por que falta insumo" , {
+
+  # No necesitamos esquema para este caso, porque la función no debería consultar nada
+
+  tabla_in <- tibble::tibble(
+    id_insumo = c(1L, 2L),
+    categoria = c("A", "B")
+  )
+
+  out <- f_valida_anio(
+    tabla = tabla_in,
+    conexion = con2,
+    insumo = 999
+  )
+
+  testthat::expect_identical(attr(out, "process_anio"), "no")
+})
+
+testthat::test_that("f_valida_anio: tibble SIN anio agrega anio desde BD y process_anio = yes por que si hay insumo" , {
+
+  con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+
+
+  # No necesitamos esquema para este caso, porque la función no debería consultar nada
+
+  tabla_in <- tibble::tibble(
+    id_insumo = c(1L, 2L),
+    categoria = c("A", "B")
+  )
+
+  out <- f_valida_anio(
+    tabla = tabla_in,
+    conexion = con2,
+    insumo = 1L
+  )
+
+  testthat::expect_identical(attr(out, "process_anio"), "yes")
+})
+
+testthat::test_that("f_valida_anio: tibble SIN anio  agrega anio desde BD y process_anio = no por que falta insumo" , {
+
+  # No necesitamos esquema para este caso, porque la función no debería consultar nada
+
+  tabla_in <- tibble::tibble(
+    id_insumo = c(1L, 2L),
+    categoria = c("A", "B")
+  )
+
+  out <- f_valida_anio(
+    tabla = tabla_in,
+    conexion = con2,
+    insumo = 999
+  )
+
+  testthat::expect_identical(attr(out, "process_anio"), "no")
+})
+
+testthat::test_that("f_valida_anio: tibble CON anio mantiene anio y process_anio = no" , {
+
+  # No necesitamos esquema para este caso, porque la función no debería consultar nada
+
+  tabla_in <- tibble::tibble(
+    id_insumo = c(1L, 2L),
+    categoria = c("A", "B"),
+    anio = c(2020L, 2021L)
+  )
+
+  out <- f_valida_anio(
+    tabla = tabla_in,
+    conexion = con2,
+    insumo = 1L
+  )
+
+  testthat::expect_identical(attr(out, "process_anio"), "no")
+})
+
+DBI::dbDisconnect(con2)
+
+
