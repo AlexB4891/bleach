@@ -427,7 +427,13 @@ perfilamiento.categorica <- function(x){
 
   y <- diccionario[x]
 
-  if_else(is.na(y), "Sin categoría", as.character(y))
+  y <- if_else(is.na(y), "Sin categoría", as.character(y))
+
+  attr(y, "count_cat") <- tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
 }
 
 
@@ -504,6 +510,7 @@ cin.id_cat_out=cout.id_cat_out
 #' @importFrom dplyr left_join
 #' @importFrom stringr str_detect
 #' @importFrom glue glue_sql
+#' @importFrom lubridate year
 #'
 #' @export
 
@@ -518,12 +525,16 @@ f_valida_anio <- function(tabla,
     query <- glue::glue_sql("
     SELECT DISTINCT
            id_insumo,
-           strftime('%Y', fecha_datos) AS anio
+           fecha_datos
     FROM tablas_in
     WHERE id_insumo = {insumo}
   ", .con = conexion)
 
-    DBI::dbGetQuery(conexion, query)
+    aux <- DBI::dbGetQuery(conexion, query)
+
+    aux$anio <-  as.integer(lubridate::year(aux$fecha_datos))
+
+    aux
   } else {
     data.frame()
   }

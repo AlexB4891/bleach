@@ -361,8 +361,6 @@ insertar_datos_tablas_in_test <- function(con) {
 crear_esquema_tablas_in_test(con2)
 insertar_datos_tablas_in_test(con2)
 
-dbGetQuery(con2, "SELECT * FROM tablas_in") %>%
-  purrr::map(class)
 
 testthat::test_that("f_valida_anio: tibble SIN anio  agrega anio desde BD y process_anio = no por que falta insumo" , {
 
