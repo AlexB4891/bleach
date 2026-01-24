@@ -15,6 +15,7 @@ Imports:
     lubridate,
     magrittr,
     purrr,
+    rje,
     RPostgres,
     RSQLite,
     stringr,
