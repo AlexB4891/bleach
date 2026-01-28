@@ -51,3 +51,58 @@ cin.id_cat_out=cout.id_cat_out
                                           nm = dplyr::pull(tbl_homol,categoria_desc))
   vector_homologacion
 }
+
+#' Aplicar homologación de categorías a un vector
+#'
+#' Esta función aplica un vector de homologación a un vector de categorías de entrada,
+#' mapeando cada categoría a su correspondiente categoría estandarizada de salida.
+#' Si una categoría de entrada no tiene una correspondencia en el vector de homologación,
+#' se asigna la categoría "Sin categoría".
+#'
+#' @param x Vector de categorías de entrada (puede ser factor, character, etc.).
+#' @param homologacion Named character vector. Vector de homologación donde los nombres
+#'  corresponden a las categorías de entrada y los valores a las categorías de salida.
+#'
+#'  @return Vector con las categorías homologadas.
+#'  @export
+
+
+f_apply_homologacion <- function(x, homologacion){
+
+  homologacion_revert <- names(homologacion)
+  names(homologacion_revert) <- homologacion
+
+  resultado <- homologacion_revert[x]
+  resultado[is.na(resultado)] <- "Sin categoría"
+  unname(resultado)
+
+}
+
+
+
+#' Función para asignar nombres finales a las columas de un dataframe
+#'
+#' Asignar nuevos nombres a las columnas de un data.frame
+#' @params df data.frame al cual se le asignarán nuevos nombres de columnas
+#' @params vector nombrado, el valor es el nombre vigente en la tabla, el nombre es la etiqueta que se
+#' convertira en el nuevo nombre de la columna
+#'
+#' @return data.frame con los nuevos nombres de columnas asignados
+#' @export
+#'
+asignar_nombres_columnas <- function(df, nuevos_nombres) {
+
+  nombres_actuales <- names(df)
+
+  nombres_nuevos <- sapply(nombres_actuales, function(nombre) {
+    if (nombre %in% nuevos_nombres) {
+      names(nuevos_nombres)[which(nuevos_nombres == nombre)]
+    } else {
+      nombre
+    }
+  })
+  names(df) <- nombres_nuevos
+  return(df)
+}
+
+

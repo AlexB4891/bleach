@@ -171,3 +171,27 @@ test_that("f_cat_etiquetas maneja tabla/variable inexistente", {
   expect_equal(length(resultado), 0)
   expect_type(resultado, "character")
 })
+
+testthat::test_that("f_apply_homologacion funciona correctamente", {
+  x <- c("A", "B", "C", "D")
+  homologacion <- c("Alpha" = "A", "Beta" = "B", "Gamma" = "C")
+
+  resultado <- f_apply_homologacion(x, homologacion)
+
+  expect_equal(resultado, c("Alpha", "Beta", "Gamma", "Sin categoría"))
+})
+
+
+test_that("asignar_nombres_columnas funciona correctamente", {
+  df <- data.frame(
+    var1 = c(1, 2, 3),
+    var2 = c("A", "B", "C"),
+    var3 = c(TRUE, FALSE, TRUE)
+  )
+
+  nuevos_nombres <- c("Variable Uno" = "var1", "Variable Dos" = "var2")
+
+  df_renombrado <- asignar_nombres_columnas(df, nuevos_nombres)
+
+  expect_equal(names(df_renombrado), c("Variable Uno", "Variable Dos", "var3"))
+})
