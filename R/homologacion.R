@@ -77,7 +77,6 @@ cin.id_cat_out=cout.id_cat_out
 #'  @return Vector con las categorías homologadas.
 #'  @export
 
-
 f_apply_homologacion <- function(x, homologacion){
 
   homologacion_revert <- names(homologacion)

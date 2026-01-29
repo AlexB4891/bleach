@@ -4,7 +4,7 @@
 \alias{f_cat_etiquetas}
 \title{Homologación de categorías de una variable categórica}
 \usage{
-f_cat_etiquetas(tbl_nombre, var, conexion)
+f_cat_etiquetas(tbl_nombre, var, conexion = NULL, diccionario = NULL)
 }
 \arguments{
 \item{tbl_nombre}{Character. Nombre de la tabla de entrada en el esquema de metadatos.}
