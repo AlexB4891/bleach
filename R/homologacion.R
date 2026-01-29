@@ -28,12 +28,15 @@
 #' @export
 f_cat_etiquetas <- function(tbl_nombre,
                           var,
-                          conexion){
+                          conexion = NULL,
+                          diccionario = NULL){
 
 
 
-  qry_cat_hom <-
-    glue::glue_sql("
+  if(!is.null(conexion)){
+
+    qry_cat_hom <-
+      glue::glue_sql("
 WITH variable AS (
   SELECT id_var FROM variables
   WHERE id_insumo=(SELECT id_insumo FROM tablas_in WHERE nombre={tbl_nombre}) AND
@@ -45,7 +48,15 @@ WHERE cin.id_var=(SELECT id_var FROM variable) AND
 cin.id_cat_out=cout.id_cat_out
          ",.con=conexion)
 
-  tbl_homol <- DBI::dbGetQuery(conexion,qry_cat_hom)
+    tbl_homol <- DBI::dbGetQuery(conexion,qry_cat_hom)
+
+  } else {
+    tbl_homol <- diccionario %>%
+      filter(variable_out == var)
+  }
+
+
+
 
   vector_homologacion <- purrr::set_names(x = dplyr::pull(tbl_homol,categoria_out),
                                           nm = dplyr::pull(tbl_homol,categoria_desc))
