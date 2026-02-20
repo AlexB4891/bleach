@@ -10,10 +10,10 @@ f_apply_homologacion(x, homologacion)
 \item{x}{Vector de categorías de entrada (puede ser factor, character, etc.).}
 
 \item{homologacion}{Named character vector. Vector de homologación donde los nombres
-corresponden a las categorías de entrada y los valores a las categorías de salida.
-
-@return Vector con las categorías homologadas.
-@export}
+corresponden a las categorías de entrada y los valores a las categorías de salida.}
+}
+\value{
+Vector con las categorías homologadas.
 }
 \description{
 Esta función aplica un vector de homologación a un vector de categorías de entrada,

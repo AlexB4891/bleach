@@ -63,6 +63,7 @@ cin.id_cat_out=cout.id_cat_out
   vector_homologacion
 }
 
+
 #' Aplicar homologación de categorías a un vector
 #'
 #' Esta función aplica un vector de homologación a un vector de categorías de entrada,
@@ -74,9 +75,9 @@ cin.id_cat_out=cout.id_cat_out
 #' @param homologacion Named character vector. Vector de homologación donde los nombres
 #'  corresponden a las categorías de entrada y los valores a las categorías de salida.
 #'
-#'  @return Vector con las categorías homologadas.
-#'  @export
-
+#' @return Vector con las categorías homologadas.
+#' @export
+#'
 f_apply_homologacion <- function(x, homologacion){
 
   homologacion_revert <- names(homologacion)
@@ -93,8 +94,8 @@ f_apply_homologacion <- function(x, homologacion){
 #' Función para asignar nombres finales a las columas de un dataframe
 #'
 #' Asignar nuevos nombres a las columnas de un data.frame
-#' @params df data.frame al cual se le asignarán nuevos nombres de columnas
-#' @params vector nombrado, el valor es el nombre vigente en la tabla, el nombre es la etiqueta que se
+#' @param df data.frame al cual se le asignarán nuevos nombres de columnas
+#' @param nuevos_nombres nombrado, el valor es el nombre vigente en la tabla, el nombre es la etiqueta que se
 #' convertira en el nuevo nombre de la columna
 #'
 #' @return data.frame con los nuevos nombres de columnas asignados

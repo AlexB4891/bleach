@@ -487,4 +487,31 @@ cin.id_cat_out=cout.id_cat_out
 }
 
 
+#' Limpieza de RUCS
+#'
+#' Los RUCS deben 13 digitos y terminar 001 y no tener ningun otro caracter
+#'
+#' @param x Character. Nombre de la tabla de entrada.
+#' @return Named character vector. Vector de homologación donde los nombres corresponden a las categorías de entrada y los valores a las categorías homologadas.
+#'
+#' @importFrom stringr str_extract
+#' @importFrom dplyr case_when mutate count across
+#' @importFrom tibble tibble
+#'
+#' @export
+perfilamiento.ruc <- function(x){
+
+
+
+  y <- dplyr::case_when(
+    is.na(x) ~ NA_character_,
+    TRUE ~ stringr::str_extract(x, "\\d{10}001$")
+  )
+
+  attr(y, "count_cat") <- tibble::tibble(original = x, transformada = y) %>%
+    dplyr::mutate(dplyr::across(everything(), is.na)) %>%
+    dplyr::count(dplyr::across(everything()))
+
+  return(y)
+}
 

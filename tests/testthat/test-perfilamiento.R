@@ -302,3 +302,12 @@ testthat::test_that("f_valida_anio: tibble CON anio mantiene anio y process_anio
 DBI::dbDisconnect(con2)
 
 
+test_that("perfilamiento.ruc identifica rucs con 13 digitos", {
+  x <- c("1723293849001", "1723293849", NA, "1717171717001")
+
+  class(x) <- "ruc" # Asignar clase para simular datos de tipo fecha_hora
+  resultado <- perfilamiento(x)
+  expect_type(resultado, "character")
+  expect_equal(as.character(resultado), c("1723293849001", NA, NA, "1717171717001"))
+
+})

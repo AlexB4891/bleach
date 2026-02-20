@@ -6,6 +6,12 @@
 \usage{
 asignar_nombres_columnas(df, nuevos_nombres)
 }
+\arguments{
+\item{df}{data.frame al cual se le asignarán nuevos nombres de columnas}
+
+\item{nuevos_nombres}{nombrado, el valor es el nombre vigente en la tabla, el nombre es la etiqueta que se
+convertira en el nuevo nombre de la columna}
+}
 \value{
 data.frame con los nuevos nombres de columnas asignados
 }
