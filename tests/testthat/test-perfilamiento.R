@@ -110,7 +110,7 @@ test_that("perfilamiento.decimal respeta el atributo de separador decimal bien",
 
 test_that("perfilamiento.fecha respeta el atributo formato", {
   x <- c("2023-01-01", "2023-02-15", NA, "2023-12-31")
-  attr(x, "argumentos") <- 'formato = "%Y-%m-%d"'
+  attr(x, "argumentos") <- '%Y-%m-%d'
   class(x) <- "fecha" # Asignar clase para simular datos de tipo fecha
   resultado <- perfilamiento(x)
   expect_s3_class(resultado, "Date")

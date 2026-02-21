@@ -237,12 +237,12 @@ perfilamiento.fecha <- function(x) {
   arg <- attr(x, "argumentos")
 
   # Expresión regular para extraer el formato después de "format = "
-  formato <- stringr::str_match(arg, 'formato\\s*=\\s*"([^"]+)"')[,2]
+  # formato <- stringr::str_match(arg, 'formato\\s*=\\s*"([^"]+)"')[,2]
 
 
   y <- dplyr::case_when(
     is.na(x) ~ NA_Date_,
-    TRUE ~ as.Date(as.character(x), format = formato)
+    TRUE ~ as.Date(as.character(x), format = arg)
   )
 
   attr(y, "count_nas") <- tibble(original = x, transformada = y) %>%
